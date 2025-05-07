@@ -3,7 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neural Network Compression Visualization | Efaimo Research</title>
+  <title>Efaimo AI</title>
+  
+  <!-- SEO meta tags -->
+  <meta name="description" content="Efaimo AI develops neural network compression techniques for efficient AI models with reduced memory footprint and faster inference while maintaining accuracy.">
+  <meta name="keywords" content="neural network compression, model pruning, weight quantization, efficient AI, Efaimo AI, model optimization">
+  <meta name="author" content="Efaimo AI">
+  <link rel="canonical" href="https://efaimo.com/">
+  
+  <!-- Social media meta tags -->
+  <meta property="og:title" content="Efaimo AI">
+  <meta property="og:description" content="Developing efficient AI models through neural network compression techniques. Learn how to make AI models smaller and faster without sacrificing accuracy.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://efaimo.com/">
+  <meta property="og:image" content="https://efaimo.com/og-image.png">
+  
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Efaimo AI">
+  <meta name="twitter:description" content="Developing efficient AI models through neural network compression techniques.">
+  <meta name="twitter:image" content="https://efaimo.com/twitter-card.png">
   
   <style>
     /* Basic Styles */
@@ -45,6 +64,16 @@
       margin-bottom: 1rem;
     }
     
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    a:hover {
+      color: var(--secondary-color);
+    }
+    
     /* Container and Header */
     .container {
       max-width: 900px;
@@ -83,7 +112,7 @@
     
     .logo-subtitle {
       font-size: 1rem;
-      color: var(--text-secondary);
+      color: #6c757d;
       font-style: italic;
     }
     
@@ -158,11 +187,12 @@
       gap: 0.5rem;
       color: #6c5ce7;
       text-decoration: none;
-      transition: color 0.3s;
+      transition: color 0.3s, transform 0.3s;
     }
 
     .footer-link:hover {
       color: #27ae60;
+      transform: translateY(-2px);
     }
 
     .footer-link svg {
@@ -188,24 +218,46 @@
         align-items: center;
         gap: 1rem;
       }
+      
+      .logo-text {
+        font-size: 2rem;
+      }
+    }
+    
+    /* Print styles */
+    @media print {
+      body {
+        background-color: white;
+        padding: 0;
+      }
+      
+      .container {
+        box-shadow: none;
+        max-width: 100%;
+      }
     }
   </style>
+  
+  <!-- Preload for better performance -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">
+  <main class="container">
+    <header class="logo">
       <div class="logo-text">Efaimo AI</div>
       <div class="logo-subtitle">Efficient AI Models</div>
-    </div>
+    </header>
     
     <div class="header">
       <h1>Neural Network Compression Pipeline</h1>
       <p>Visualizing Neural Network Compression through Pruning and Quantization</p>
     </div>
     
-    <div class="svg-container">
+    <div class="svg-container" role="img" aria-labelledby="svg-title svg-desc">
       <!-- SVG Animation -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+        <title id="svg-title">Neural Network Compression Animation</title>
+        <desc id="svg-desc">An animated visualization showing the process of neural network compression through pruning and quantization techniques.</desc>
         <style type="text/css"><![CDATA[
           /* Base Animation Keyframes */
           @keyframes fadeIn {
@@ -715,11 +767,11 @@
         </g>
         
         <!-- Footer Logo -->
-        <text x="400" y="380" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Efaimo - Researching Neural Network Compression Techniques</text>
+        <text x="400" y="380" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Efaimo AI - <tspan font-weight="bold">Researching Neural Network Compression Techniques</tspan></text>
       </svg>
     </div>
     
-    <div class="explanation">
+    <section class="explanation">
       <h2>Neural Network Compression Process Explained</h2>
       
       <div class="step">
@@ -751,25 +803,36 @@
           <li>Accuracy: Maintains 95-98% of original performance</li>
         </ul>
       </div>
-    </div>
+    </section>
     
-    <div class="footer">
+    <footer class="footer">
       <p>© 2025 Efaimo AI</p>
       <div class="footer-links">
-        <a href="https://efaimo.com" class="footer-link">
+        <a href="https://efaimo.com" class="footer-link" aria-label="Visit our blog">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
           <span>Blog</span>
         </a>
-        <a href="https://github.com/efaimo-ai" class="footer-link">
+        <a href="https://github.com/efaimo-ai" class="footer-link" aria-label="Visit our GitHub page">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
           <span>GitHub</span>
         </a>
-        <a href="mailto:hello@efaimo.com" class="footer-link">
+        <a href="mailto:hello@efaimo.com" class="footer-link" aria-label="Contact us via email">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
           <span>Contact</span>
         </a>
       </div>
-    </div>
-  </div>
+    </footer>
+  </main>
+  
+  <!-- Structured data - Organization information -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Efaimo AI",
+    "url": "https://efaimo.com",
+    "description": "Researching and developing neural network compression techniques for efficient AI models."
+  }
+  </script>
 </body>
 </html>
