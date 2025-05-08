@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Efaimo AI Blog - Neural Network Compression Research</title>
+  <meta name="description" content="Efaimo AI's research blog on Neural Network Compression techniques, including quantization, pruning, and knowledge distillation.">
+  
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="Efaimo AI Blog">
+  <meta property="og:description" content="Research blog on Neural Network Compression techniques.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://efaimo.com/blog/">
+  <meta property="og:image" content="https://efaimo.com/og-image.png">
+  
+  <!-- Styles -->
+  <style>
+    /* Base Styles */
+    :root {
+      --primary-color: #6c5ce7;
+      --secondary-color: #27ae60;
+      --accent-color: #e74c3c;
+      --background-color: #f8f9fa;
+      --content-background: #ffffff;
+      --text-color: #333;
+      --text-light-color: #666;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', 'Helvetica', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--background-color);
+      padding: 0;
+    }
+    
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    a:hover {
+      color: var(--secondary-color);
+    }
+    
+    /* Header Styles */
+    .header {
+      background-color: var(--content-background);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo-text {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .logo-tagline {
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+      font-style: italic;
+    }
+    
+    .main-menu {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .main-menu a {
+      font-weight: 600;
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .main-menu a:hover, .main-menu a.active {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    
+    /* Main Content Area */
+    .main-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+      padding: 0 2rem;
+    }
+    
+    /* Blog Post Styles */
+    .blog-content {
+      background-color: var(--content-background);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 2.5rem;
+    }
+    
+    .blog-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+    
+    .post-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .post-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1.5rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .post-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    
+    .post-category {
+      display: inline-block;
+      background-color: rgba(108, 92, 231, 0.1);
+      color: var(--primary-color);
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .post-date {
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+    }
+    
+    .post-title {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+    }
+    
+    .post-excerpt {
+      color: var(--text-light-color);
+      margin-bottom: 1rem;
+    }
+    
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .read-more svg {
+      transition: transform 0.3s;
+    }
+    
+    .read-more:hover svg {
+      transform: translateX(5px);
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .sidebar-section {
+      background-color: var(--content-background);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1.5rem;
+    }
+    
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #eee;
+    }
+    
+    .sidebar-content {
+      font-size: 0.9rem;
+    }
+    
+    .about-author {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+    
+    .author-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    .author-bio {
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+      margin-top: 0.5rem;
+    }
+    
+    .category-list, .recent-posts {
+      list-style: none;
+    }
+    
+    .category-list li, .recent-posts li {
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .category-list li:last-child, .recent-posts li:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    /* Footer Styles */
+    .footer {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 3rem 2rem;
+      margin-top: 3rem;
+    }
+    
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2.5fr 1fr 1.5fr;
+      gap: 1rem;
+    }
+    
+    .footer-section h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+      position: relative;
+      padding-bottom: 0.8rem;
+    }
+    
+    .footer-section h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background-color: var(--secondary-color);
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.8rem;
+    }
+    
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.8);
+      transition: color 0.3s;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .social-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: white;
+      transition: all 0.3s;
+    }
+    
+    .social-links a:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-3px);
+    }
+    
+    .copyright {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Status Message */
+    .coming-soon-banner {
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      color: white;
+      text-align: center;
+      padding: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .footer-section:nth-child(2) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-start;
+      margin-right: 0;
+    }
+
+    .footer-section:nth-child(3) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .footer-section:nth-child(2) ul.footer-links {
+      text-align: right;
+      width: 100%;
+    }
+
+    .footer-section:nth-child(3) ul.footer-links {
+      text-align: right;
+    }
+
+    .footer-section:nth-child(2) h3::after {
+      left: auto; /* 중앙 정렬 제거 */
+      right: 0; /* 오른쪽 정렬 */
+      transform: none;
+    }
+
+    .footer-section:nth-child(3) h3::after {
+      left: auto;
+      right: 0;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        order: -1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .main-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .blog-title {
+        font-size: 1.8rem;
+      }
+      
+      .blog-content {
+        padding: 1.5rem;
+      }
+      
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-section:nth-child(2),
+      .footer-section:nth-child(3) {
+        align-items: flex-start;
+      }
+      
+      .footer-section:nth-child(2) ul.footer-links,
+      .footer-section:nth-child(3) ul.footer-links {
+        text-align: left;
+      }
+      
+      .footer-section:nth-child(2) h3::after,
+      .footer-section:nth-child(3) h3::after {
+        left: 0;
+        transform: none;
+        right: auto;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .blog-title {
+        font-size: 1.5rem;
+      }
+      
+      .main-container {
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Alert Banner -->
+  <div class="coming-soon-banner">
+    🚀 More content coming soon!
+  </div>
+  
+  <!-- Header Area -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="/">
+          <div class="logo-text">Efaimo AI</div>
+        </a>
+        <div class="logo-tagline">Efficient AI Models</div>
+      </div>
+      <nav class="main-menu">
+        <a href="/">Home</a>
+        <a href="/blog/" class="active">Blog</a>
+        <a href="https://github.com/efaimo-ai" target="_blank">GitHub</a>
+        <a href="mailto:hello@efaimo.com">Contact</a>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Main Content Area -->
+  <main class="main-container">
+    <!-- Blog Post List Area -->
+    <div class="blog-content">
+      <h1 class="blog-title">Efaimo AI Research Blog</h1>
+      <p>Welcome to our research blog where we share insights, techniques, and results from our ongoing work in neural network compression.</p>
+      
+      <div class="post-list">
+        <!-- Post 1 -->
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-category">Research Plan</span>
+            <span class="post-date">May 8, 2025</span>
+          </div>
+          <h2 class="post-title">
+            <a href="/posts/neural-network-quantization-plan/">Neural Network Quantization Research Plan</a>
+          </h2>
+          <p class="post-excerpt">
+            An overview of our research plan for developing and testing neural network quantization techniques, including both symmetric and asymmetric linear quantization methods.
+          </p>
+          <a href="/posts/neural-network-quantization-plan/" class="read-more">
+            Read More
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </article>
+        
+        <!-- Placeholder for future posts - 실제 사용 시 주석 해제하고 내용 업데이트 
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-category">Quantization</span>
+            <span class="post-date">Coming Soon</span>
+          </div>
+          <h2 class="post-title">
+            <a href="#">Symmetric Linear Quantization Implementation</a>
+          </h2>
+          <p class="post-excerpt">
+            Detailed explanation of our symmetric linear quantization implementation with code examples and performance results.
+          </p>
+          <a href="#" class="read-more">
+            Coming Soon
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </article>
+        -->
+      </div>
+    </div>
+    
+    <!-- Sidebar Area -->
+    <aside class="sidebar">
+      <!-- About Author -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">About</h3>
+        <div class="sidebar-content about-author">
+          <div class="author-text">Efaimo AI</div>
+          <p class="author-bio">We focus on neural network compression techniques for efficient AI models. Our research aims to develop optimization methods such as model pruning, quantization, and knowledge distillation to create high-performance AI systems for resource-limited devices.</p>
+        </div>
+      </div>
+      
+      <!-- Categories -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Categories</h3>
+        <div class="sidebar-content">
+          <ul class="category-list">
+            <li><a href="#">Research Plan (1)</a></li>
+            <li><a href="#">Quantization (Coming Soon)</a></li>
+            <li><a href="#">Model Pruning (Coming Soon)</a></li>
+            <li><a href="#">Knowledge Distillation (Coming Soon)</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Recent Posts -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Recent Posts</h3>
+        <div class="sidebar-content">
+          <ul class="recent-posts">
+            <li><a href="/posts/neural-network-quantization-plan/">Neural Network Quantization Research Plan</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </main>
+  
+  <!-- Footer Area -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>Efaimo AI</h3>
+        <p>Specialized in neural network compression techniques for efficient AI model development.</p>
+        <div class="social-links">
+          <a href="https://github.com/efaimo-ai" target="_blank" aria-label="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          </a>
+          <a href="mailto:hello@efaimo.com" aria-label="Email">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Links</h3>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="https://github.com/efaimo-ai">GitHub</a></li>
+          <li><a href="mailto:hello@efaimo.com">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Research Focus</h3>
+        <ul class="footer-links">
+          <li><a href="/posts/neural-network-quantization-plan/">Model Quantization</a></li>
+          <li><a href="#">Weight Pruning</a></li>
+          <li><a href="#">Knowledge Distillation</a></li>
+          <li><a href="#">Low-bit Inference</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="copyright">
+      &copy; 2025 Efaimo AI. All rights reserved.
+    </div>
+  </footer>
+</body>
+</html>
