@@ -9,12 +9,17 @@
   <meta name="author" content="Efaimo AI">
   <link rel="canonical" href="https://efaimo.com/">
   
+  <!-- Language Alternates -->
+  <link rel="alternate" hreflang="en" href="https://efaimo.com/" />
+  <link rel="alternate" hreflang="ko" href="https://efaimo.com/ko/" />
+  
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:title" content="Efaimo AI - Neural Network Compression Techniques">
   <meta property="og:description" content="Develop efficient AI models through neural network compression techniques. Learn how to make AI models smaller and faster without sacrificing accuracy.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://efaimo.com/">
   <meta property="og:image" content="https://efaimo.com/og-image.png">
+  <meta property="og:locale" content="en_US" />
   
   <!-- Twitter Card meta tags -->
   <meta name="twitter:card" content="summary_large_image">
@@ -25,6 +30,11 @@
   <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Styles -->
   <style>
@@ -48,11 +58,13 @@
     }
     
     body {
-      font-family: 'Arial', 'Helvetica', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       line-height: 1.6;
       color: var(--text-color);
       background-color: var(--background-color);
       padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     
     a {
@@ -81,6 +93,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
     }
     
     .logo {
@@ -121,6 +139,37 @@
     .main-menu a:hover, .main-menu a.active {
       color: var(--primary-color);
       border-bottom: 2px solid var(--primary-color);
+    }
+    
+    /* Language Toggle - Toss Style */
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+    }
+    
+    .lang-toggle a {
+      color: var(--text-light-color);
+      font-weight: 500;
+      border: none;
+      transition: color 0.3s;
+      letter-spacing: 0.02em;
+    }
+    
+    .lang-toggle a:hover {
+      color: var(--text-color);
+    }
+    
+    .lang-toggle a.active {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+    
+    .lang-toggle .divider {
+      color: #d1d5db;
+      font-weight: 300;
     }
     
     /* Main Content Area */
@@ -484,12 +533,19 @@
         </a>
         <div class="logo-tagline">Efficient AI Models</div>
       </div>
-      <nav class="main-menu">
-        <a href="/" class="active">Home</a>
-        <a href="/blog/">Blog</a>
-        <a href="https://github.com/efaimo-ai" target="_blank">GitHub</a>
-        <a href="mailto:hello@efaimo.com">Contact</a>
-      </nav>
+      <div class="header-right">
+        <nav class="main-menu">
+          <a href="/" class="active">Home</a>
+          <a href="/blog/">Blog</a>
+          <a href="https://github.com/efaimo-ai" target="_blank">GitHub</a>
+          <a href="mailto:hello@efaimo.com">Contact</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="#" class="active">ENG</a>
+          <span class="divider">|</span>
+          <a href="/ko/">KOR</a>
+        </div>
+      </div>
     </div>
   </header>
   
