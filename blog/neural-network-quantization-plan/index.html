@@ -518,9 +518,27 @@
         gap: 1rem;
       }
       
+      .header-right {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
+      
       .main-menu {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: center;
+        width: 100%;
+        gap: 1rem;
+      }
+      
+      .main-menu a {
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+      
+      .lang-toggle {
+        justify-content: center;
+        width: 100%;
       }
       
       .blog-title {
@@ -560,6 +578,24 @@
       
       .main-container {
         padding: 0 1rem;
+      }
+      
+      /* 더 작은 화면에서 추가 조정 */
+      .main-menu {
+        gap: 0.8rem;
+      }
+      
+      .main-menu a {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.5rem;
+      }
+      
+      .lang-toggle {
+        font-size: 1rem;
+      }
+      
+      .lang-toggle a {
+        padding: 0.3rem 0.5rem;
       }
     }
   </style>
