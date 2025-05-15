@@ -458,10 +458,29 @@
         flex-direction: column;
         gap: 1rem;
       }
+
+      .header-right {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
       
       .main-menu {
-        flex-wrap: wrap;
+        display: flex;
+        flex-wrap: nowrap;
         justify-content: center;
+        width: 100%;
+        gap: 1rem;
+      }
+
+      .main-menu a {
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .lang-toggle {
+        justify-content: center;
+        width: 100%;
       }
       
       .hero {
