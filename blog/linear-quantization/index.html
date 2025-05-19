@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Understanding Neural Network Quantization: Symmetric vs. Asymmetric Linear Methods | Efaimo AI Blog</title>
+  <meta name="description" content="Efaimo AI's in-depth exploration of symmetric and asymmetric linear quantization techniques for neural network optimization.">
+  <link rel="canonical" href="https://efaimo.com/blog/linear-quantization/" />
+  
+  <!-- Language Alternates -->
+  <link rel="alternate" hreflang="en" href="https://efaimo.com/blog/linear-quantization/" />
+  <link rel="alternate" hreflang="ko" href="https://efaimo.com/blog/linear-quantization/ko/" />
+  
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="Understanding Neural Network Quantization | Efaimo AI Blog">
+  <meta property="og:description" content="In-depth exploration of symmetric and asymmetric linear quantization techniques for efficient AI models.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://efaimo.com/blog/linear-quantization/">
+  <meta property="og:image" content="https://efaimo.com/og-image.png">
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <style>
+    /* Base Styles */
+    :root {
+      --primary-color: #6c5ce7;
+      --secondary-color: #27ae60;
+      --accent-color: #e74c3c;
+      --background-color: #f8f9fa;
+      --content-background: #ffffff;
+      --text-color: #333;
+      --text-light-color: #666;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--background-color);
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    a:hover {
+      color: var(--secondary-color);
+    }
+    
+    /* Header Styles */
+    .header {
+      background-color: var(--content-background);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo-text {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .logo-tagline {
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+      font-style: italic;
+    }
+    
+    .main-menu {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    
+    .main-menu a {
+      font-weight: 600;
+      color: var(--text-color);
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .main-menu a:hover, .main-menu a.active {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    
+    /* Language Toggle */
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+    }
+    
+    .lang-toggle a {
+      color: var(--text-light-color);
+      font-weight: 500;
+      border: none;
+      transition: color 0.3s;
+      letter-spacing: 0.02em;
+    }
+    
+    .lang-toggle a:hover {
+      color: var(--text-color);
+    }
+    
+    .lang-toggle a.active {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+    
+    .lang-toggle .divider {
+      color: #d1d5db;
+      font-weight: 300;
+    }
+    
+    /* Main Content Area */
+    .main-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+      padding: 0 2rem;
+    }
+    
+    /* Blog Post Styles */
+    .blog-content {
+      background-color: var(--content-background);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 2.5rem;
+    }
+    
+    .blog-meta {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+    }
+    
+    .blog-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    
+    .blog-category {
+      display: inline-block;
+      background-color: rgba(108, 92, 231, 0.1);
+      color: var(--primary-color);
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .blog-post h1, .blog-post h2, .blog-post h3 {
+      color: var(--primary-color);
+      margin: 1.5rem 0 1rem 0;
+    }
+    
+    .blog-post h1 {
+      font-size: 1.8rem;
+    }
+    
+    .blog-post h2 {
+      font-size: 1.5rem;
+    }
+    
+    .blog-post h3 {
+      font-size: 1.3rem;
+    }
+    
+    .blog-post p {
+      margin-bottom: 1.2rem;
+    }
+    
+    .blog-post ul, .blog-post ol {
+      margin: 1rem 0 1.5rem 1.5rem;
+    }
+    
+    .blog-post li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .blog-post img {
+      max-width: 100%;
+      border-radius: var(--border-radius);
+      margin: 1.5rem 0;
+    }
+    
+    .blog-post code {
+      background-color: #f5f5f5;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, 'Andale Mono', monospace;
+      font-size: 0.9em;
+    }
+    
+    .blog-post pre {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    .blog-post pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+    
+    .back-to-blog {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+    
+    .back-to-blog:hover {
+      color: var(--secondary-color);
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .sidebar-section {
+      background-color: var(--content-background);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1.5rem;
+    }
+    
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #eee;
+    }
+    
+    .sidebar-content {
+      font-size: 0.9rem;
+    }
+    
+    .about-author {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+    
+    .author-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    .author-bio {
+      font-size: 0.9rem;
+      color: var(--text-light-color);
+      margin-top: 0.5rem;
+    }
+    
+    .category-list, .recent-posts {
+      list-style: none;
+    }
+    
+    .category-list li, .recent-posts li {
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .category-list li:last-child, .recent-posts li:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    /* Footer Styles */
+    .footer {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 3rem 2rem;
+      margin-top: 3rem;
+    }
+    
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2.5fr 1fr 1.5fr;
+      gap: 1rem;
+    }
+    
+    .footer-section h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+      position: relative;
+      padding-bottom: 0.8rem;
+    }
+    
+    .footer-section h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background-color: var(--secondary-color);
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.8rem;
+    }
+    
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.8);
+      transition: color 0.3s;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .social-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: white;
+      transition: all 0.3s;
+    }
+    
+    .social-links a:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-3px);
+    }
+    
+    .copyright {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Status Message */
+    .coming-soon-banner {
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      color: white;
+      text-align: center;
+      padding: 0.8rem;
+      font-weight: 600;
+    }
+    
+    /* Markdown Styles */
+    .markdown code {
+      background-color: #f5f5f5;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, 'Andale Mono', monospace;
+      font-size: 0.9em;
+    }
+    
+    .markdown pre {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    .markdown pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+    
+    .markdown blockquote {
+      border-left: 4px solid var(--primary-color);
+      padding-left: 1rem;
+      margin-left: 0;
+      color: var(--text-light-color);
+    }
+    
+    .footer-section:nth-child(2) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-start;
+      margin-right: 0;
+    }
+
+    .footer-section:nth-child(3) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .footer-section:nth-child(2) ul.footer-links {
+      text-align: right;
+      width: 100%;
+    }
+
+    .footer-section:nth-child(3) ul.footer-links {
+      text-align: right;
+    }
+
+    .footer-section:nth-child(2) h3::after {
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+
+    .footer-section:nth-child(3) h3::after {
+      left: auto;
+      right: 0;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        order: -1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .header-right {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
+      
+      .main-menu {
+        flex-wrap: nowrap;
+        justify-content: center;
+        width: 100%;
+        gap: 1rem;
+      }
+      
+      .main-menu a {
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+      
+      .lang-toggle {
+        justify-content: center;
+        width: 100%;
+      }
+      
+      .blog-title {
+        font-size: 1.8rem;
+      }
+      
+      .blog-content {
+        padding: 1.5rem;
+      }
+      
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-section:nth-child(2),
+      .footer-section:nth-child(3) {
+        align-items: flex-start;
+      }
+      
+      .footer-section:nth-child(2) ul.footer-links,
+      .footer-section:nth-child(3) ul.footer-links {
+        text-align: left;
+      }
+      
+      .footer-section:nth-child(2) h3::after,
+      .footer-section:nth-child(3) h3::after {
+        left: 0;
+        transform: none;
+        right: auto;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .blog-title {
+        font-size: 1.5rem;
+      }
+      
+      .main-container {
+        padding: 0 1rem;
+      }
+      
+      .main-menu {
+        gap: 0.8rem;
+      }
+      
+      .main-menu a {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.5rem;
+      }
+      
+      .lang-toggle {
+        font-size: 1rem;
+      }
+      
+      .lang-toggle a {
+        padding: 0.3rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Alert Banner -->
+  <div class="coming-soon-banner">
+    🚀 More content coming soon!
+  </div>
+  
+  <!-- Header Area -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="/">
+          <div class="logo-text">Efaimo AI</div>
+        </a>
+        <div class="logo-tagline">Efficient AI Models</div>
+      </div>
+      <div class="header-right">
+        <nav class="main-menu">
+          <a href="/">Home</a>
+          <a href="/blog/" class="active">Blog</a>
+          <a href="https://github.com/efaimo-ai" target="_blank">GitHub</a>
+          <a href="mailto:hello@efaimo.com">Contact</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="#" class="active">ENG</a>
+          <span class="divider">|</span>
+          <a href="/blog/linear-quantization/ko/">KOR</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content Area -->
+  <main class="main-container">
+    <!-- Blog Post Area -->
+    <article class="blog-content">
+      <a href="/blog/" class="back-to-blog">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Back to blog</span>
+      </a>
+      
+      <div class="blog-meta">
+        <span class="blog-category">Quantization</span>
+        <h1 class="blog-title">Understanding Neural Network Quantization: Symmetric vs. Asymmetric Linear Methods</h1>
+        <div>Published: May 19, 2025 &nbsp;|&nbsp; Author: Efaimo AI Research Team</div>
+      </div>
+      
+      <div class="blog-post markdown">
+        <p>In our <a href="/blog/neural-network-quantization-plan/">previous post</a>, we outlined our research plan for neural network quantization techniques. Today, we're diving deep into two fundamental quantization methods: Symmetric and Asymmetric Linear Quantization.</p>
+
+        <h2>Why Quantization Matters</h2>
+        <p>Before exploring the technical details, let's consider why quantization has become crucial for efficient AI deployment:</p>
+        
+        <ul>
+          <li><strong>Reduced Memory Usage</strong>: Converting 32-bit floating-point weights to 8-bit or 4-bit integers can shrink model size by 4-8x</li>
+          <li><strong>Faster Inference</strong>: Integer operations are significantly less computationally expensive than floating-point operations</li>
+          <li><strong>Power Efficiency</strong>: Lower-precision computations consume less energy, critical for edge devices with battery constraints</li>
+          <li><strong>Hardware Compatibility</strong>: Many specialized AI accelerators are optimized for integer computations</li>
+        </ul>
+        
+        <h2>The Basics: Bits, Bytes, and Number Representation</h2>
+        <p>To fully understand quantization, we need to start with how computers represent numbers:</p>
+        
+        <ul>
+          <li><strong>Bit</strong>: The most fundamental unit of information, representing either 0 or 1</li>
+          <li><strong>Byte</strong>: 8 bits, capable of representing 256 different values (0-255)</li>
+          <li><strong>Integer</strong>: Can be unsigned (0 to 2^n-1) or signed (-2^(n-1) to 2^(n-1)-1)</li>
+          <li><strong>Floating-Point</strong>: Represents real numbers with a sign bit, exponent, and mantissa (or significand)</li>
+        </ul>
+        
+        <p>In deep learning, we typically work with:</p>
+        <ul>
+          <li><strong>Weights</strong>: Learnable parameters multiplied by inputs during forward passes</li>
+          <li><strong>Activations</strong>: The outputs of each layer, resulting from computations between inputs and weights</li>
+          <li><strong>Biases</strong>: Constant values added to outputs to shift the activation function</li>
+        </ul>
+        
+        <p>Most neural networks are trained using 32-bit floating-point (FP32) precision, providing high accuracy but at the cost of substantial memory and computational demands.</p>
+        
+        <h2>Quantization Fundamentals</h2>
+        <p>At its core, quantization maps continuous floating-point values to a discrete set of integer values. This process inevitably introduces some approximation error, but when done properly, the impact on model accuracy can be minimal while providing significant efficiency gains.</p>
+        
+        <p>The key challenge in quantization is determining the optimal mapping between floating-point and integer values that minimizes information loss.</p>
+        
+        <h2>Symmetric Linear Quantization</h2>
+        <p>Symmetric linear quantization is characterized by fixing the zero-point to 0, ensuring that floating-point zero maps exactly to integer zero. This approach is particularly elegant and computationally efficient.</p>
+        
+        <h3>Mathematical Formulation</h3>
+        <p>For a floating-point value <code>x</code> being mapped to a quantized value <code>xQ</code>:</p>
+        
+        <pre><code>xint = round(x / Δ)
+xQ = clamp(-Nlevels/2, Nlevels/2 - 1, xint)  // for signed integers</code></pre>
+        
+        <p>Where:</p>
+        <ul>
+          <li><code>Δ</code> (scale): The step size between adjacent representable values</li>
+          <li><code>Nlevels</code>: The number of representable levels (256 for 8-bit)</li>
+          <li><code>clamp(a, b, x)</code>: Constrains x to the range [a, b]</li>
+        </ul>
+        
+        <p>For dequantization (converting back to floating-point):</p>
+        <pre><code>xfloat = xQ * Δ</code></pre>
+        
+        <h3>Example Calculation</h3>
+        <p>Let's work through a concrete example with a weight matrix having values in the range [-4.0, 4.0] that we want to quantize to 8-bit signed integers (-128 to 127):</p>
+        
+        <ol>
+          <li>Calculate the scale factor:<br>
+             Δ = max(abs(-4.0), abs(4.0)) / 127 = 4.0 / 127 ≈ 0.0315</li>
+          
+          <li>Quantize specific values:
+            <ul>
+              <li>For -4.0: xint = round(-4.0 / 0.0315) = -127, xQ = clamp(-128, 127, -127) = -127</li>
+              <li>For 0: xint = round(0 / 0.0315) = 0, xQ = clamp(-128, 127, 0) = 0</li>
+              <li>For 4.0: xint = round(4.0 / 0.0315) = 127, xQ = clamp(-128, 127, 127) = 127</li>
+            </ul>
+          </li>
+          
+          <li>Verify dequantization:
+            <ul>
+              <li>-127 → -127 × 0.0315 = -4.0005 (original: -4.0)</li>
+              <li>0 → 0 × 0.0315 = 0 (original: 0)</li>
+              <li>127 → 127 × 0.0315 = 4.0005 (original: 4.0)</li>
+            </ul>
+          </li>
+        </ol>
+        
+        <p>This demonstrates how symmetric quantization preserves zero exactly and provides good approximations at the extremes of the value range.</p>
+        
+        <h2>Asymmetric Linear Quantization</h2>
+        <p>While symmetric quantization works well for weight distributions centered around zero, many activation functions (like ReLU) produce outputs that are predominantly positive. For these asymmetric distributions, asymmetric quantization often provides better results by utilizing the full range of integer values.</p>
+        
+        <h3>Mathematical Formulation</h3>
+        <p>For asymmetric quantization:</p>
+        
+        <pre><code>xint = round(x / Δ) + z
+xQ = clamp(0, Nlevels - 1, xint)  // for unsigned integers</code></pre>
+        
+        <p>Where:</p>
+        <ul>
+          <li><code>z</code> (zero-point): The integer value that represents floating-point zero</li>
+          <li><code>Δ</code> (scale): (max(x) - min(x)) / (Nlevels - 1)</li>
+        </ul>
+        
+        <p>For dequantization:</p>
+        <pre><code>xfloat = (xQ - z) * Δ</code></pre>
+        
+        <h3>Example Calculation</h3>
+        <p>Let's quantize a weight matrix with values in the range [-2.5, 1.8] to 8-bit unsigned integers (0 to 255):</p>
+        
+        <ol>
+          <li>Calculate the scale and zero-point:
+            <ul>
+              <li>Δ = (1.8 - (-2.5)) / (255 - 0) = 4.3 / 255 ≈ 0.0169</li>
+              <li>z = round(0 - (-2.5) / 0.0169) = round(147.93) = 148</li>
+            </ul>
+          </li>
+          
+          <li>Quantize specific values:
+            <ul>
+              <li>For -2.5: xint = round(-2.5 / 0.0169) + 148 = -148 + 148 = 0, xQ = clamp(0, 255, 0) = 0</li>
+              <li>For 0: xint = round(0 / 0.0169) + 148 = 148, xQ = clamp(0, 255, 148) = 148</li>
+              <li>For 1.8: xint = round(1.8 / 0.0169) + 148 = 107 + 148 = 255, xQ = clamp(0, 255, 255) = 255</li>
+            </ul>
+          </li>
+          
+          <li>Verify dequantization:
+            <ul>
+              <li>0 → (0 - 148) × 0.0169 = -2.5012 (original: -2.5)</li>
+              <li>148 → (148 - 148) × 0.0169 = 0 (original: 0)</li>
+              <li>255 → (255 - 148) × 0.0169 = 1.8083 (original: 1.8)</li>
+            </ul>
+          </li>
+        </ol>
+        
+        <h2>Comparing Symmetric and Asymmetric Quantization</h2>
+        <p>The fundamental difference between these approaches lies in how they handle the zero point:</p>
+        
+        <ul>
+          <li><strong>Symmetric Quantization</strong>: FP32 0 maps directly to INT 0</li>
+          <li><strong>Asymmetric Quantization</strong>: FP32 0 maps to a computed integer value (like 148 in our example)</li>
+        </ul>
+        
+        <p>When to use each approach:</p>
+        
+        <ul>
+          <li><strong>Symmetric Quantization</strong>: Generally preferable for weights, which typically have distributions centered around zero</li>
+          <li><strong>Asymmetric Quantization</strong>: Often better for activations, especially after ReLU layers, which have skewed distributions with predominantly positive values</li>
+        </ul>
+        
+        <h2>Implementation Considerations</h2>
+        <p>When implementing quantization in practice, several important factors come into play:</p>
+        
+        <ol>
+          <li><strong>Per-tensor vs. Per-channel Quantization</strong>: Applying different quantization parameters for each channel often yields better results than using the same parameters for the entire tensor</li>
+          <li><strong>Quantization-Aware Training vs. Post-Training Quantization</strong>: Incorporating quantization effects during training typically helps reduce accuracy loss compared to quantizing after training</li>
+          <li><strong>Hardware Constraints</strong>: Some hardware accelerators may only support specific quantization schemes or bit-widths</li>
+          <li><strong>Dynamic Range</strong>: Carefully analyzing the distribution of values helps in setting optimal quantization parameters to preserve important information</li>
+        </ol>
+        
+        <h2>Next Steps</h2>
+        <p>In our upcoming work, we'll implement both symmetric and asymmetric quantization on MobileViT models and compare their performance across different bit-widths (FP32, INT16, INT8, INT4). We'll evaluate these approaches based on:</p>
+        
+        <ul>
+          <li>Accuracy preservation</li>
+          <li>Model size reduction</li>
+          <li>Inference speed improvements</li>
+          <li>Memory usage</li>
+        </ul>
+        
+        <p>Stay tuned for our implementation details and experimental results!</p>
+      </div>
+    </article>
+    
+    <!-- Sidebar Area -->
+    <aside class="sidebar">
+      <!-- About Author -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">About</h3>
+        <div class="sidebar-content about-author">
+          <div class="author-text">Efaimo AI</div>
+          <p class="author-bio">We focus on neural network compression techniques for efficient AI models. Our research aims to develop optimization methods such as model pruning, quantization, and knowledge distillation to create high-performance AI systems for resource-limited devices.</p>
+        </div>
+      </div>
+      
+      <!-- Categories -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Categories</h3>
+        <div class="sidebar-content">
+          <ul class="category-list">
+            <li><a href="#">Research Plan (1)</a></li>
+            <li><a href="#">Quantization (1)</a></li>
+            <li><a href="#">Model Pruning (Coming Soon)</a></li>
+            <li><a href="#">Knowledge Distillation (Coming Soon)</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Recent Posts -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Recent Posts</h3>
+        <div class="sidebar-content">
+          <ul class="recent-posts">
+            <li><a href="/blog/linear-quantization/">Understanding Neural Network Quantization: Symmetric vs. Asymmetric Linear Methods</a></li>
+            <li><a href="/blog/neural-network-quantization-plan/">Neural Network Quantization Research Plan</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </main>
+  
+  <!-- Footer Area -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>Efaimo AI</h3>
+        <p>Specialized in neural network compression techniques for efficient AI model development.</p>
+        <div class="social-links">
+          <a href="https://github.com/efaimo-ai" target="_blank" aria-label="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          </a>
+          <a href="mailto:hello@efaimo.com" aria-label="Email">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Links</h3>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="https://github.com/efaimo-ai">GitHub</a></li>
+          <li><a href="mailto:hello@efaimo.com">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Research Focus</h3>
+        <ul class="footer-links">
+          <li><a href="/blog/neural-network-quantization-plan/">Model Quantization</a></li>
+          <li><a href="#">Weight Pruning</a></li>
+          <li><a href="#">Knowledge Distillation</a></li>
+          <li><a href="#">Low-bit Inference</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="copyright">
+      &copy; 2025 Efaimo AI. All rights reserved.
+    </div>
+  </footer>
+</body>
+</html>
