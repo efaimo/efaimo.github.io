@@ -57,6 +57,8 @@
       padding: 0;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      word-break: keep-all; /* 한국어 단어 분리 방지 */
+      overflow-wrap: break-word; /* 긴 단어 처리 */
     }
     
     a {
@@ -597,12 +599,12 @@
             <span class="post-date">2025년 5월 19일</span>
           </div>
           <h2 class="post-title">
-          <a href="/blog/linear-quantization/">신경망 양자화 이해하기: 대칭 및 비대칭 선형 방식</a>
+          <a href="/blog/linear-quantization/ko/">신경망 양자화 이해하기: 대칭 및 비대칭 선형 방식</a>
           </h2>
           <p class="post-excerpt">
             실제 예제와 구현 고려 사항을 통해 대칭 및 비대칭 선형 양자화 기술을 심층적으로 비교합니다.
           </p>
-          <a href="/blog/linear-quantization/ko" class="read-more">
+          <a href="/blog/linear-quantization/ko/" class="read-more">
           자세히 읽기
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -673,8 +675,8 @@
         <h3 class="sidebar-title">카테고리</h3>
         <div class="sidebar-content">
           <ul class="category-list">
-            <li><a href="#">연구 계획 (1)</a></li>
-            <li><a href="#">양자화 (곧 추가)</a></li>
+            <li><a href="#">연구 계획</a></li>
+            <li><a href="#">양자화</a></li>
             <li><a href="#">모델 프루닝 (곧 추가)</a></li>
             <li><a href="#">지식 증류 (곧 추가)</a></li>
           </ul>
@@ -686,7 +688,7 @@
         <h3 class="sidebar-title">최근 포스트</h3>
         <div class="sidebar-content">
           <ul class="recent-posts">
-            <li><a href="/blog/neural-network-quantization-plan/ko/">신경망 양자화 연구 계획</a></li>
+            <!-- 최근 포스트는 자바스크립트로 동적 생성 -->
           </ul>
         </div>
       </div>
@@ -734,5 +736,67 @@
       &copy; 2025 Efaimo AI. All rights reserved.
     </div>
   </footer>
+
+  <!-- 카테고리와 최근 포스트 자동 업데이트 스크립트 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 모든 게시물에서 카테고리 정보 수집
+      const posts = document.querySelectorAll('.post-card');
+      const categoryCounts = {};
+      
+      // 각 게시물의 카테고리 확인 및 카운팅
+      posts.forEach(post => {
+        const categoryElement = post.querySelector('.post-category');
+        if (categoryElement) {
+          const category = categoryElement.textContent.trim();
+          categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+        }
+      });
+      
+      // 사이드바의 카테고리 리스트 업데이트
+      const categoryItems = document.querySelectorAll('.category-list li a');
+      categoryItems.forEach(item => {
+        // 카테고리 이름 추출 (괄호 앞부분)
+        const categoryName = item.textContent.split('(')[0].trim();
+        
+        // 해당 카테고리의 카운트 가져오기
+        const count = categoryCounts[categoryName] || 0;
+        
+        // 텍스트 업데이트
+        if (item.textContent.includes('곧 추가')) {
+          // "곧 추가" 텍스트 유지
+          item.textContent = `${categoryName} (곧 추가)`;
+        } else {
+          // 카운트 추가
+          item.textContent = `${categoryName} (${count})`;
+        }
+      });
+      
+      // 최근 게시물 리스트 업데이트
+      updateRecentPosts();
+    });
+
+    // 최근 게시물 리스트 업데이트 함수
+    function updateRecentPosts() {
+      const posts = Array.from(document.querySelectorAll('.post-card'));
+      const recentPostsList = document.querySelector('.recent-posts');
+      
+      // 리스트 비우기
+      recentPostsList.innerHTML = '';
+      
+      // 최근 5개 게시물 추가
+      posts.slice(0, 5).forEach(post => {
+        const postTitle = post.querySelector('.post-title a').textContent.trim();
+        const postLink = post.querySelector('.post-title a').getAttribute('href');
+        
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = postLink;
+        a.textContent = postTitle;
+        li.appendChild(a);
+        recentPostsList.appendChild(li);
+      });
+    }
+  </script>
 </body>
 </html>
